@@ -1,6 +1,7 @@
 from os import path, remove
 import errno
 import shutil
+from pathlib import Path
 from Directories import Directories
 
 
@@ -21,14 +22,17 @@ class Movie:
         print(self.name + ":", self.size.__str__(), "GB")
 
     def is_locked(self):
+        path_obj = Path(self.path)
+
+        if not path_obj.exists():
+            raise FileNotFoundError
+
         try:
-            fp = open(self.path)
-        except IOError as e:
-            if e.errno == errno.EACCES:
-                print(self.name, "is currently locked...")
-                return True
+            path_obj.rename(path_obj)
+        except PermissionError:
+            print(self.path, "is currently locked...")
+            return True
         else:
-            fp.close()
             return False
 
     def is_compressed(self):
@@ -39,6 +43,9 @@ class Movie:
 
     def move_to_upload(self):
         self._move(Directories.upload_dir)
+
+    def upload_to_nas(self):
+        self._move(Directories.nas_dir)
 
     def delete(self):
         if path.exists(self.path):
@@ -53,3 +60,4 @@ class Movie:
         if not self.is_locked():
             print("Moving", self.name, "from", source_dir, "to", dest_dir)
             shutil.move(source_dir, dest_dir)
+            print("Finished Moving", self.name, "from", source_dir, "to", dest_dir)
