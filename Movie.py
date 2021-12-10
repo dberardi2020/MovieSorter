@@ -14,6 +14,7 @@ def convert_to_gb(size_in_bytes):
 
 class Movie:
     def __init__(self, movie):
+        self.name_raw = Path(movie.name).with_suffix('')
         self.name = movie.name
         self.path = movie.path
         self.size = convert_to_gb(path.getsize(self.path))

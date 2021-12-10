@@ -16,3 +16,6 @@ class Movies:
 
     def get_movies(self):
         return self.movies
+
+    def length(self):
+        return len(self.movies)

@@ -9,6 +9,7 @@ task_list.sort_all = "Sort All"
 task_list.sort_downloads = "Sort Downloads"
 task_list.sort_compression = "Sort Compression"
 task_list.drive_info = "Get External HD info"
+task_list.run_compression = "Run Compression"
 task_list.upload = "Upload to NAS"
 
 
@@ -40,7 +41,15 @@ def selection_prompt():
         case task_list.drive_info:
             tasks.get_external_info()
 
+        case task_list.run_compression:
+            tasks.sort_downloaded()
+            tasks.clean_compression_queue()
+            tasks.run_compression()
+            tasks.clean_compression_queue()
+
         case task_list.upload:
+            tasks.sort_downloaded()
+            tasks.clean_compression_queue()
             tasks.upload_to_nas()
 
         case _:

@@ -3,6 +3,8 @@ import shutil
 from Movies import Movies
 from Directories import Directories
 from os import path
+import subprocess
+import time
 from InquirerPy import inquirer
 
 
@@ -28,6 +30,7 @@ def get_external_info():
 
 
 def sort_downloaded():
+    check_name()
     print("Sorting movies in Downloaded...")
     downloaded = Movies(Directories.download_dir)
 
@@ -48,15 +51,32 @@ def clean_compression_queue():
 
     for movie in queued.get_movies():
         for done_movie in done.get_movies():
-            if movie.name == done_movie.name:
+            if movie.name_raw == done_movie.name_raw:
                 if not done_movie.is_locked():
                     movie.delete()
+
+
+def run_compression():
+    print("Compressing movies in Ready for Compression...")
+    queued = Movies(Directories.compression_dir)
+    master_start_time = time.time()
+    for movie in queued.get_movies():
+        output_path = path.join(Directories.upload_dir, movie.name).replace(".mkv", ".mp4")
+        handbrake_command = [r"HandBrakeCLI.exe", "-i", f"{movie.path}", "-o",
+                             f"{output_path}", "-e", "x264", "-q", "20", "-B", "160"]
+        start_time = time.time()
+        subprocess.run(handbrake_command, shell=True)
+        run_time = (time.time() - start_time) / 60
+        print("Finished converting", movie.name, "in", run_time, "minutes")
+
+    run_time = (time.time() - master_start_time) / 60
+    print("Completed", queued.length(), "conversion(s) in", run_time, "minutes")
 
 
 def upload_to_nas():
     print("Uploading movies in Ready for Upload")
     uploads = Movies(Directories.upload_dir)
-    num_uploads = len(uploads.get_movies)
+    num_uploads = uploads.length()
 
     for movie in uploads.get_movies():
         print(f"{num_uploads} movies left to upload")
