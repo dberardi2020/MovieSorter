@@ -1,6 +1,6 @@
 from os import scandir
 
-from Movie import Movie
+from Classes.Movie import Movie
 
 
 class Movies:

@@ -2,10 +2,11 @@
 
 from os import path
 import shutil
-from Movies import Movies
-from Directories import Directories
-import task_selector
-import tasks
+
+from Classes.Movies import Movies
+from Classes.Directories import Directories
+import definitions.task_selector
+import definitions.tasks
 
 upload_limit = 6
 

@@ -1,10 +1,10 @@
-from os import path, remove
-from pathlib import Path
-from Directories import Directories
 import errno
 import shutil
-import helpers
+from os import path, remove
+from pathlib import Path
 
+import definitions.helpers
+from Classes.Directories import Directories
 
 Directories = Directories()
 

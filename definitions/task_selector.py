@@ -1,7 +1,8 @@
-import tasks
-import types
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
+import types
+
+import definitions.tasks
 
 task_list = types.SimpleNamespace()
 
