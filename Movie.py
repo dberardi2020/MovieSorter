@@ -1,26 +1,23 @@
 from os import path, remove
-import errno
-import shutil
 from pathlib import Path
 from Directories import Directories
+import errno
+import shutil
+import helpers
 
 
 Directories = Directories()
 
 
-def convert_to_gb(size_in_bytes):
-    return round(size_in_bytes * (10 ** -9))
-
-
 class Movie:
     def __init__(self, movie):
-        self.name_raw = Path(movie.name).with_suffix('')
         self.name = movie.name
+        self.name_raw = Path(movie.name).with_suffix('')
         self.path = movie.path
-        self.size = convert_to_gb(path.getsize(self.path))
+        self.size = helpers.convert_to_gb(path.getsize(self.path))
 
     def print(self):
-        print(self.name + ":", self.size.__str__(), "GB")
+        print(f"  -  {self.name}: {self.size.__str__()} GB")
 
     def is_locked(self):
         path_obj = Path(self.path)
@@ -50,7 +47,6 @@ class Movie:
 
     def delete(self):
         if path.exists(self.path):
-            print("Deleting", self.path)
             remove(self.path)
             print("Deleted", self.path)
 
@@ -59,6 +55,7 @@ class Movie:
         dest_dir = path.join(dest_dir, self.name)
 
         if not self.is_locked():
-            print("Moving", self.name, "from", source_dir, "to", dest_dir)
+            # print("Moving", self.name, "from", source_dir, "to", dest_dir)
+            print(f"Moving {self.name} ({self.size}) from {source_dir} to {dest_dir}")
             shutil.move(source_dir, dest_dir)
-            print("Finished Moving", self.name, "from", source_dir, "to", dest_dir)
+            print(f"Finished Moving {self.name} ({self.size}) from {source_dir} to {dest_dir}")

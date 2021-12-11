@@ -1,12 +1,8 @@
 # MovieSorter
  Script for managing each stage in the process of ripping a DVD collection
 
-TODO:
-* Add Tasks:
-  * List Movies
-    * All Directories
-    * Choose Directory
-  * Rename File
-    * Choose Directory
-    * Choose File
-    * Input Name
+TODO
+* Swap External HD
+* Estimate Compression time statistically
+* Automated Testing
+* Generalize functions/variables & setup
