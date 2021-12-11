@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
 from os import path
-import shutil
 
-from Classes.Movies import Movies
 from Classes.Directories import Directories
-import definitions.task_selector
-import definitions.tasks
+from definitions import tasks, task_selector
 
 upload_limit = 6
 

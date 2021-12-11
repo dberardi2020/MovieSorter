@@ -1,13 +1,14 @@
-from InquirerPy import inquirer
-from os import path
 import os
 import shutil
 import subprocess
 import time
+from os import path
 
-from Classes.Movies import Movies
+from InquirerPy import inquirer
+
 from Classes.Directories import Directories
-import definitions.helpers
+from Classes.Movies import Movies
+from definitions import helpers
 
 upload_limit = 6
 
