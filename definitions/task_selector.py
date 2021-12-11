@@ -10,7 +10,8 @@ task_list = types.SimpleNamespace()
 task_list.sort_all = "Sort All"
 task_list.sort_downloads = "Sort Downloads"
 task_list.sort_compression = "Sort Compression"
-task_list.drive_info = "Get External HD info"
+task_list.check_name = "Check Missing Title"
+task_list.drive_info = "Get External HD Info"
 task_list.dir_info = "Get Directory Info"
 task_list.run_compression = "Run Compression"
 task_list.upload = "Upload to NAS"
@@ -39,6 +40,9 @@ def selection_prompt():
 
         case task_list.sort_compression:
             tasks.clean_compression_queue()
+
+        case task_list.check_name:
+            tasks.check_name()
 
         case task_list.drive_info:
             tasks.get_external_info()

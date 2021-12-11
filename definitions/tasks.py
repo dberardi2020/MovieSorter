@@ -15,6 +15,7 @@ upload_limit = 6
 Directories = Directories()
 
 
+# TODO: fix error if file is busy.  May require refactor
 def check_name():
     check_path = path.join(Directories.download_dir, "title.mkv")
     if path.exists(check_path):
