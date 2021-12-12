@@ -2,10 +2,8 @@ import shutil
 from os import path, remove
 from pathlib import Path
 
-from Classes.Directories import Directories
-from definitions import helpers
-
-Directories = Directories()
+from Classes import Directories
+from definitions import helpers, const
 
 
 class Movie:
@@ -33,16 +31,17 @@ class Movie:
             return False
 
     def is_compressed(self):
-        return path.exists(path.join(Directories.upload_dir, self.name))
+        Directories.ready.append(self.name)
+        return path.exists(Directories.ready.append(self.name))
 
     def move_to_compression(self):
-        self._move(Directories.compression_dir)
+        self._move(Directories.queued.path)
 
     def move_to_upload(self):
-        self._move(Directories.upload_dir)
+        self._move(Directories.ready.path)
 
     def upload_to_nas(self):
-        self._move(Directories.nas_dir)
+        self._move(const.nas_dir)
 
     def delete(self):
         if path.exists(self.path):
