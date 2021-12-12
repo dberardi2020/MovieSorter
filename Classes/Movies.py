@@ -12,7 +12,7 @@ class Movies:
         for movie in scandir(directory):
             movie = Movie(movie)
             self.movies.append(Movie(movie))
-            self.num_gb += movie.size
+            self.num_gb += movie.num_gb
 
     def print(self):
         print(f"{self.directory} [{self.length()} movies | {self.num_gb} GB]")

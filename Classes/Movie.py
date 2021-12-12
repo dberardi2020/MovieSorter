@@ -13,10 +13,10 @@ class Movie:
         self.name = movie.name
         self.name_raw = Path(movie.name).with_suffix('')
         self.path = movie.path
-        self.size = helpers.convert_to_gb(path.getsize(self.path))
+        self.num_gb = helpers.convert_to_gb(path.getsize(self.path))
 
     def print(self):
-        print(f"  -  {self.name}: {self.size.__str__()} GB")
+        print(f"  -  {self.name}: {self.num_gb.__str__()} GB")
 
     def is_locked(self):
         path_obj = Path(self.path)
@@ -54,6 +54,6 @@ class Movie:
         dest_dir = path.join(dest_dir, self.name)
 
         if not self.is_locked():
-            print(f"Moving {self.name} ({self.size}) from {source_dir} to {dest_dir}")
+            print(f"Moving {self.name} ({self.num_gb}) from {source_dir} to {dest_dir}")
             shutil.move(source_dir, dest_dir)
-            print(f"Finished Moving {self.name} ({self.size}) from {source_dir} to {dest_dir}")
+            print(f"Finished Moving {self.name} ({self.num_gb}) from {source_dir} to {dest_dir}")
