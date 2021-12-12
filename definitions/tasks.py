@@ -17,6 +17,7 @@ Directories = Directories()
 
 # TODO: fix error if file is busy.  May require refactor
 def check_name():
+    Movies(Directories.download_dir).print()
     check_path = path.join(Directories.download_dir, "title.mkv")
     if path.exists(check_path):
         name = inquirer.text(message="Please rename title.mkv in Downloaded: ").execute()
@@ -33,13 +34,15 @@ def get_external_info():
 
 
 def get_dir_info():
-    downloaded = Movies(Directories.download_dir)
-    queued = Movies(Directories.compression_dir)
-    done = Movies(Directories.upload_dir)
+    Movies(Directories.download_dir).print()
+    Movies(Directories.compression_dir).print()
+    Movies(Directories.upload_dir).print()
 
-    downloaded.print()
-    queued.print()
-    done.print()
+
+# def get_dir_info():
+#     Movies.downloaded.print()
+#     Movies.queued.print()
+#     Movies.ready.print()
 
 
 def sort():
@@ -53,23 +56,23 @@ def sort_downloaded():
     print("Sorting movies in Downloaded...")
     downloaded = Movies(Directories.download_dir)
 
-    for movie in downloaded.get_movies():
+    for movie in downloaded.movies:
         if movie.is_locked():
             continue
 
-        if movie.size < upload_limit:
+        if movie.num_gb < upload_limit:
             movie.move_to_upload()
         else:
             movie.move_to_compression()
 
 
 def clean_compression_queue():
-    print("Sorting movies in Ready for Compression...")
+    print("Cleaning movies in Ready for Compression...")
     queued = Movies(Directories.compression_dir)
     done = Movies(Directories.upload_dir)
 
-    for movie in queued.get_movies():
-        for done_movie in done.get_movies():
+    for movie in queued.movies:
+        for done_movie in done.movies:
             if movie.name_raw == done_movie.name_raw:
                 if not done_movie.is_locked():
                     movie.delete()
@@ -80,7 +83,7 @@ def run_compression():
     queued = Movies(Directories.compression_dir)
     master_start_time = time.time()
     logs = []
-    for movie in queued.get_movies():
+    for movie in queued.movies:
         output_path = path.join(Directories.upload_dir, movie.name).replace(".mkv", ".mp4")
         handbrake_command = [r"HandBrakeCLI.exe", "-i", f"{movie.path}", "-o",
                              f"{output_path}", "-e", "x264", "-q", "20", "-B", "160"]
@@ -93,7 +96,7 @@ def run_compression():
                 print(line)
 
         compressed_movie_size = helpers.convert_to_gb(path.getsize(output_path))
-        output_log = f"Compressed {movie.name} from {movie.size} GB to {compressed_movie_size} " \
+        output_log = f"Compressed {movie.name} from {movie.num_gb} GB to {compressed_movie_size} " \
                      f"GB in {run_time(start_time)}"
         logs.append(output_log)
 
@@ -107,11 +110,11 @@ def upload_to_nas():
     uploads = Movies(Directories.upload_dir)
     num_uploads = uploads.length()
     uploads_cnt = num_uploads
-    size_total = uploads.size
+    size_total = uploads.num_gb
     start_time = time.time()
 
-    for movie in uploads.get_movies():
-        size_total = size_total - movie.size
+    for movie in uploads.movies:
+        size_total = size_total - movie.num_gb
         print(f"{uploads_cnt} movie(s) left to upload - [{size_total} GB]")
         uploads_cnt = uploads_cnt - 1
 

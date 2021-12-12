@@ -54,7 +54,6 @@ class Movie:
         dest_dir = path.join(dest_dir, self.name)
 
         if not self.is_locked():
-            # print("Moving", self.name, "from", source_dir, "to", dest_dir)
             print(f"Moving {self.name} ({self.size}) from {source_dir} to {dest_dir}")
             shutil.move(source_dir, dest_dir)
             print(f"Finished Moving {self.name} ({self.size}) from {source_dir} to {dest_dir}")

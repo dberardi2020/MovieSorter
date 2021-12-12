@@ -1,6 +1,7 @@
 from os import path
 
 
+# TODO: Refactor to include Directory class
 class Directories:
     def __init__(self):
         self.external_drive_letter = "E:"

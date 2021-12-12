@@ -3,7 +3,7 @@
 from os import path
 
 from Classes.Directories import Directories
-from definitions import tasks, task_selector
+from definitions import task_selector
 
 upload_limit = 6
 
@@ -18,6 +18,5 @@ if __name__ == '__main__':
         exit()
 
     while True:
-        tasks.check_name()
         print()
         task_selector.selection_prompt()
