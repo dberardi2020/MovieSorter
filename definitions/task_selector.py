@@ -14,6 +14,7 @@ task_list.sort_compression = "Sort Compression"
 task_list.check_name = "Check Missing Title"
 task_list.drive_info = "Get External HD Info"
 task_list.dir_info = "Get Directory Info"
+task_list.compress_upload = "Compress and Upload"
 task_list.run_compression = "Run Compression"
 task_list.upload = "Upload to NAS"
 
@@ -51,9 +52,13 @@ def selection_prompt():
         case task_list.dir_info:
             tasks.get_dir_info()
 
+        case task_list.compress_upload:
+            tasks.sort()
+            tasks.run_compression()
+            tasks.upload_to_nas()
+
         case task_list.run_compression:
-            tasks.sort_downloaded()
-            tasks.clean_compression_queue()
+            tasks.sort()
             tasks.run_compression()
             tasks.clean_compression_queue()
 
