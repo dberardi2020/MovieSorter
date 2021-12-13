@@ -2,6 +2,7 @@
  Script for managing each stage in the process of ripping a DVD collection
 
 TODO
+* Determine solution for recording failures and series
 * Customize Compression output
 * Save Compression logs
 * Estimate Compression time statistically

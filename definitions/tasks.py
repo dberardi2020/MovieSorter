@@ -102,7 +102,6 @@ def upload_to_nas():
     start_time = time.time()
 
     for movie in Directories.ready.get_movies():
-        size_total = size_total - movie.size
         print(f"{uploads_left} movie(s) left to upload - [{size_total} GB]")
         uploads_left = uploads_left - 1
 
@@ -110,6 +109,7 @@ def upload_to_nas():
             continue
 
         movie.upload_to_nas()
+        size_total = size_total - movie.size
 
     print(f"Uploaded {num_uploads} movies in {helpers.run_time(start_time)}")
 
