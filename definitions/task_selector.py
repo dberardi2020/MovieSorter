@@ -7,6 +7,7 @@ from definitions import tasks
 
 task_list = types.SimpleNamespace()
 
+task_list.run_dev = "Run Dev Function"
 task_list.sort_all = "Sort All"
 task_list.sort_downloads = "Sort Downloads"
 task_list.sort_compression = "Sort Compression"
@@ -60,8 +61,8 @@ def selection_prompt():
             tasks.sort()
             tasks.upload_to_nas()
 
+        case task_list.run_dev:
+            tasks.dev_func()
+
         case _:
             exit()
-
-
-

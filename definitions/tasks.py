@@ -1,12 +1,13 @@
 import os
 import shutil
 import subprocess
+import sys
 import time
 from os import path
 
 from InquirerPy import inquirer
 
-from Classes import Movies, Directories
+from Classes import Directories
 from definitions import const
 from definitions import helpers
 
@@ -15,7 +16,7 @@ upload_limit = 6
 
 # TODO: fix error if file is busy.  May require refactor
 def check_name():
-    Movies.downloaded.directory.print()
+    Directories.downloads.print()
     check_path = Directories.downloads.append("title.mkv")
     if path.exists(check_path):
         name = inquirer.text(message="Please rename title.mkv in Downloaded: ").execute()
@@ -32,14 +33,15 @@ def get_external_info():
 
 
 def get_dir_info():
-    Movies.downloaded.print()
-    Movies.queued.print()
-    Movies.ready.print()
+    Directories.downloads.print()
+    Directories.queued.print()
+    Directories.ready.print()
 
 
 def sort():
     sort_downloaded()
     clean_compression_queue()
+    print()
     get_dir_info()
 
 
@@ -47,11 +49,11 @@ def sort_downloaded():
     check_name()
     print("Sorting movies in Downloaded...")
 
-    for movie in Movies.downloaded.movies:
+    for movie in Directories.downloads.get_movies():
         if movie.is_locked():
             continue
 
-        if movie.num_gb() < upload_limit:
+        if movie.size < upload_limit:
             movie.move_to_upload()
         else:
             movie.move_to_compression()
@@ -60,20 +62,18 @@ def sort_downloaded():
 def clean_compression_queue():
     print("Cleaning movies in Ready for Compression...")
 
-    for movie in Movies.queued.movies:
-        for done_movie in Movies.ready.movies:
-            if movie.name_raw == done_movie.name_raw:
-                if not done_movie.is_locked():
-                    movie.delete()
+    for movie in Directories.queued.get_movies():
+        if movie.is_compressed() and not movie.is_locked():
+            movie.delete()
 
 
 def run_compression():
     print("Compressing movies in Ready for Compression...")
-    queued = Movies(Directories.compression_dir)
+    queued = Directories.queued.get_movies()
     master_start_time = time.time()
     logs = []
-    for movie in Movies.queued.movies:
-        output_path = path.join(Directories.upload_dir, movie.name).replace(".mkv", ".mp4")
+    for movie in queued:
+        output_path = Directories.ready.append(movie.name).replace(".mkv", ".mp4")
         handbrake_command = [r"HandBrakeCLI.exe", "-i", f"{movie.path}", "-o",
                              f"{output_path}", "-e", "x264", "-q", "20", "-B", "160"]
         start_time = time.time()
@@ -85,37 +85,35 @@ def run_compression():
                 print(line)
 
         compressed_movie_size = helpers.convert_to_gb(path.getsize(output_path))
-        output_log = f"Compressed {movie.name} from {movie.num_gb()} GB to {compressed_movie_size} " \
-                     f"GB in {run_time(start_time)}"
+        output_log = f"Compressed {movie.name} from {movie.size} GB to {compressed_movie_size} " \
+                     f"GB in {helpers.run_time(start_time)}"
         logs.append(output_log)
 
-    print("Completed", queued.num_movies(), "compression(s) in", run_time(master_start_time))
+    print("Completed", len(queued), "compression(s) in", helpers.run_time(master_start_time))
     for log in logs:
         print(log)
 
 
 def upload_to_nas():
     print("Uploading movies in Ready for Upload...")
-    uploads = Movies(Directories.upload_dir)
-    num_uploads = uploads.num_movies()
-    uploads_cnt = num_uploads
-    size_total = uploads.num_gb()
+    num_uploads = Directories.ready.get_movies_cnt()
+    uploads_left = Directories.ready.get_movies_cnt()
+    size_total = Directories.ready.get_size()
     start_time = time.time()
 
-    for movie in uploads.movies:
-        size_total = size_total - movie.num_gb()
-        print(f"{uploads_cnt} movie(s) left to upload - [{size_total} GB]")
-        uploads_cnt = uploads_cnt - 1
+    for movie in Directories.ready.get_movies():
+        size_total = size_total - movie.size
+        print(f"{uploads_left} movie(s) left to upload - [{size_total} GB]")
+        uploads_left = uploads_left - 1
 
         if movie.is_locked():
             continue
 
         movie.upload_to_nas()
 
-    print(f"Uploaded {num_uploads} movies in {run_time(start_time)}")
+    print(f"Uploaded {num_uploads} movies in {helpers.run_time(start_time)}")
 
 
-# Helper Functions
-def run_time(start_time):
-    seconds = time.time() - start_time
-    return time.strftime("%H:%M:%S", time.gmtime(seconds))
+def dev_func():
+    pass
+    sys.exit()

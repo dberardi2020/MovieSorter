@@ -9,7 +9,6 @@ from definitions import helpers, const
 class Movie:
     def __init__(self, movie):
         self.name = movie.name
-        self.name_raw = Path(movie.name).with_suffix('')
         self.path = movie.path
         self.size = helpers.convert_to_gb(path.getsize(self.path))
 
@@ -31,8 +30,7 @@ class Movie:
             return False
 
     def is_compressed(self):
-        Directories.ready.append(self.name)
-        return path.exists(Directories.ready.append(self.name))
+        return path.exists(Directories.ready.append(self.name).replace("mkv", "mp4"))
 
     def move_to_compression(self):
         self._move(Directories.queued.path)
@@ -53,6 +51,6 @@ class Movie:
         dest_dir = path.join(dest_dir, self.name)
 
         if not self.is_locked():
-            print(f"Moving {self.name} ({self.size}) from {source_dir} to {dest_dir}")
+            print(f"Moving {self.name} [{self.size} GB] from {source_dir} to {dest_dir}")
             shutil.move(source_dir, dest_dir)
-            print(f"Finished Moving {self.name} ({self.size}) from {source_dir} to {dest_dir}")
+            print(f"Finished Moving {self.name} [{self.size} GB] from {source_dir} to {dest_dir}")
