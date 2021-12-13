@@ -1,21 +1,17 @@
 #!/usr/bin/env python
-
+import sys
 from os import path
 
-from Classes.Directories import Directories
-from definitions import task_selector
+from definitions import task_selector, const
 
 upload_limit = 6
-
-Directories = Directories()
-
 
 if __name__ == '__main__':
     print("MovieSorter execution started...")
 
-    if not path.exists(Directories.base_dir):
+    if not path.exists(const.base_dir):
         print("Please insert External HD and run again...")
-        exit()
+        sys.exit()
 
     while True:
         print()
