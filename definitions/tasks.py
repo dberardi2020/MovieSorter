@@ -16,9 +16,9 @@ upload_limit = 6
 
 # TODO: fix error if file is busy.  May require refactor
 def check_name():
-    Directories.downloads.print()
     check_path = Directories.downloads.append("title.mkv")
     if path.exists(check_path):
+        Directories.downloads.print()
         name = inquirer.text(message="Please rename title.mkv in Downloaded: ").execute()
         new_path = Directories.downloads.append(name + ".mkv")
         os.rename(check_path, new_path)
