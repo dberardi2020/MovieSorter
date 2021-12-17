@@ -53,7 +53,7 @@ def sort_downloaded():
         if movie.is_locked():
             continue
 
-        if movie.size < upload_limit:
+        if movie.size < const.upload_limit:
             movie.move_to_upload()
         else:
             movie.move_to_compression()
@@ -62,6 +62,7 @@ def sort_downloaded():
 def clean_compression_queue():
     print("Cleaning movies in Ready for Compression...")
 
+    # TODO: this needs to check the movie being written, not read
     for movie in Directories.queued.get_movies():
         if movie.is_compressed() and not movie.is_locked():
             movie.delete()
@@ -80,9 +81,12 @@ def run_compression():
         process = subprocess.Popen(handbrake_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                    universal_newlines=True)
 
+        # TODO: figure out how to dump logs to file
+        test_file = open(path.join(const.log_dir, "ExampleLog.txt"), 'w')
         for line in process.stdout:
             if line.startswith("Encoding:"):
-                print(line)
+                # test_file.write(line + "\n")
+                print(line, file=open(path.join(const.log_dir, "ExampleLog.txt"), 'w'))
 
         compressed_movie_size = helpers.convert_to_gb(path.getsize(output_path))
         output_log = f"Compressed {movie.name} from {movie.size} GB to {compressed_movie_size} " \

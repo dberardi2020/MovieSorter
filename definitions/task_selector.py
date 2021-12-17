@@ -8,15 +8,12 @@ from definitions import tasks
 task_list = types.SimpleNamespace()
 
 task_list.run_dev = "Run Dev Function"
-task_list.sort_all = "Sort All"
-task_list.sort_downloads = "Sort Downloads"
-task_list.sort_compression = "Sort Compression"
-task_list.check_name = "Check Missing Title"
-task_list.drive_info = "Get External HD Info"
-task_list.dir_info = "Get Directory Info"
 task_list.compress_upload = "Compress and Upload"
 task_list.run_compression = "Run Compression"
 task_list.upload = "Upload to NAS"
+task_list.dir_info = "Get Directory Info"
+task_list.drive_info = "Get External HD Info"
+task_list.check_name = "Check Missing Title"
 
 
 def selection_prompt():
@@ -30,19 +27,10 @@ def selection_prompt():
     action = inquirer.select(
         message="Select an action:",
         choices=choices,
-        default=task_list.sort_all
+        default=task_list.dir_info
     ).execute()
 
     match action:
-        case task_list.sort_all:
-            tasks.sort()
-
-        case task_list.sort_downloads:
-            tasks.sort_downloaded()
-
-        case task_list.sort_compression:
-            tasks.clean_compression_queue()
-
         case task_list.check_name:
             tasks.check_name()
 
