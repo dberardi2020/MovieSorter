@@ -8,8 +8,6 @@ class _Directory:
     def __init__(self, name):
         self.name = name
         self.path = path.join(const.base_dir, name)
-        self._size = self.get_size()
-        self._movies = self.get_movies()
 
     def append(self, file_name):
         return path.join(self.path, file_name)
@@ -18,6 +16,7 @@ class _Directory:
         movies = []
         for movie in scandir(self.path):
             movies.append(Movie(movie))
+        movies.sort(key=lambda x: x.creation_time(), reverse=True)
         return movies
 
     def get_size(self):
@@ -36,6 +35,13 @@ class _Directory:
         print(f"{self.name} [{self.get_movies_cnt()} movies | {self.get_size()} GB]")
         for movie in self.get_movies():
             movie.print()
+
+    def contains(self, name):
+        for self_movie in self.get_movies():
+            if self_movie.name == name:
+                return self_movie
+
+        return False
 
 
 downloads = _Directory("Downloaded")

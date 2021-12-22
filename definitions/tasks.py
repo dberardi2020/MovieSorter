@@ -1,4 +1,3 @@
-import os
 import shutil
 import subprocess
 import sys
@@ -8,20 +7,18 @@ from os import path
 from InquirerPy import inquirer
 
 from Classes import Directories
-from definitions import const
-from definitions import helpers
+from Classes.Logger import Logger
+from definitions import const, helpers
 
 upload_limit = 6
 
 
-# TODO: fix error if file is busy.  May require refactor
 def check_name():
-    check_path = Directories.downloads.append("title.mkv")
-    if path.exists(check_path):
+    check = Directories.downloads.contains("title.mkv")
+    if check and not check.is_locked():
         Directories.downloads.print()
         name = inquirer.text(message="Please rename title.mkv in Downloaded: ").execute()
-        new_path = Directories.downloads.append(name + ".mkv")
-        os.rename(check_path, new_path)
+        check.rename(name)
 
 
 def get_external_info():
@@ -41,8 +38,6 @@ def get_dir_info():
 def sort():
     sort_downloaded()
     clean_compression_queue()
-    print()
-    get_dir_info()
 
 
 def sort_downloaded():
@@ -57,23 +52,29 @@ def sort_downloaded():
             movie.move_to_upload()
         else:
             movie.move_to_compression()
+    print()
 
 
 def clean_compression_queue():
     print("Cleaning movies in Ready for Compression...")
 
-    # TODO: this needs to check the movie being written, not read
     for movie in Directories.queued.get_movies():
-        if movie.is_compressed() and not movie.is_locked():
+        if movie.is_compressed():
             movie.delete()
+    print()
 
 
 def run_compression():
     print("Compressing movies in Ready for Compression...")
     queued = Directories.queued.get_movies()
+    total_tasks = len(queued)
+    current_task = 0
     master_start_time = time.time()
-    logs = []
+    logger = Logger()
+    log_cache = []
     for movie in queued:
+        target = 0
+        current_task += 1
         output_path = Directories.ready.append(movie.name).replace(".mkv", ".mp4")
         handbrake_command = [r"HandBrakeCLI.exe", "-i", f"{movie.path}", "-o",
                              f"{output_path}", "-e", "x264", "-q", "20", "-B", "160"]
@@ -81,21 +82,20 @@ def run_compression():
         process = subprocess.Popen(handbrake_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                    universal_newlines=True)
 
-        # TODO: figure out how to dump logs to file
-        test_file = open(path.join(const.log_dir, "ExampleLog.txt"), 'w')
         for line in process.stdout:
-            if line.startswith("Encoding:"):
-                # test_file.write(line + "\n")
-                print(line, file=open(path.join(const.log_dir, "ExampleLog.txt"), 'w'))
+            if helpers.process_compression_output(movie.name, current_task, total_tasks, line, target, logger):
+                target += 10
 
         compressed_movie_size = helpers.convert_to_gb(path.getsize(output_path))
         output_log = f"Compressed {movie.name} from {movie.size} GB to {compressed_movie_size} " \
                      f"GB in {helpers.run_time(start_time)}"
-        logs.append(output_log)
+        log_cache.append(output_log)
 
-    print("Completed", len(queued), "compression(s) in", helpers.run_time(master_start_time))
-    for log in logs:
-        print(log)
+    print()
+    logger.log_and_print(f"Completed {total_tasks} compression(s) in {helpers.run_time(master_start_time)}")
+    for log in log_cache:
+        logger.log_and_print(log)
+    print()
 
 
 def upload_to_nas():
@@ -119,5 +119,30 @@ def upload_to_nas():
 
 
 def dev_func():
-    pass
     sys.exit()
+
+
+def mark_failure():
+    check_name()
+    last_rip = Directories.downloads.get_movies()[0]
+    last_rip_name = last_rip.remove_extension()
+    confirmed = inquirer.confirm(message=f"Are you sure you want to mark {last_rip_name} as a failure?",
+                                 raise_keyboard_interrupt=False).execute()
+    if confirmed:
+        file = open(const.failure_file, 'r+')
+        if last_rip_name not in file.read():
+            file.write("\n" + last_rip_name)
+            file.close()
+            last_rip.delete()
+        else:
+            print("This entry is already marked as a failure")
+
+
+def mark_series():
+    series = inquirer.text(message="What is the name of the series?: ", raise_keyboard_interrupt=False).execute()
+    file = open(const.series_file, 'r+')
+    if series not in file.read():
+        file.write("\n" + series)
+        file.close()
+    else:
+        print("This entry is already marked as a series")
