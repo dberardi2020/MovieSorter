@@ -1,6 +1,6 @@
 from os import path
 
-dev = True
+dev = False
 
 upload_limit = 8
 
