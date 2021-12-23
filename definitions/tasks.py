@@ -8,7 +8,7 @@ from InquirerPy import inquirer
 
 from Classes import Directories
 from Classes.Logger import Logger
-from definitions import const, helpers
+from definitions import const, helpers, statistics
 
 upload_limit = 6
 
@@ -119,6 +119,8 @@ def upload_to_nas():
 
 
 def dev_func():
+    statistics.add_stat(14, 555555)
+    statistics.read_stat()
     sys.exit()
 
 

@@ -1,6 +1,6 @@
 from os import path
 
-dev = False
+dev = True
 
 upload_limit = 8
 
@@ -12,6 +12,7 @@ else:
     base_dir = path.join(external_drive, "Plex Movies")
 
 data_dir = path.join(base_dir, "data")
+stats_pickle = path.join(data_dir, "stats.pkl")
 
 log_dir = path.join(data_dir, "logs")
 

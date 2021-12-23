@@ -3,3 +3,5 @@ Maze Runner
 Despicable Me
 Predator
 RED
+Pitch Perfect
+Matrix
