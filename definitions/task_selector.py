@@ -12,10 +12,10 @@ task_list.upload = "Upload to NAS"
 task_list.run_compression = "Run Compression"
 task_list.compress_upload = "Compress and Upload"
 task_list.dir_info = "Get Directory Info"
+task_list.drive_info = "Get External HD Info"
 task_list.check_name = "Fix Missing Title"
 task_list.mark_failure = "Mark Failure"
 task_list.mark_series = "Mark Series"
-task_list.drive_info = "Get External HD Info"
 
 
 def selection_prompt():

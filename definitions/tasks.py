@@ -146,9 +146,10 @@ def mark_failure():
 
 def mark_series():
     series = inquirer.text(message="What is the name of the series?: ", raise_keyboard_interrupt=False).execute()
-    file = open(const.series_file, 'r+')
-    if series not in file.read():
-        file.write("\n" + series)
-        file.close()
-    else:
-        print("This entry is already marked as a series")
+    if series:
+        file = open(const.series_file, 'r+')
+        if series not in file.read():
+            file.write("\n" + series)
+            file.close()
+        else:
+            print("This entry is already marked as a series")

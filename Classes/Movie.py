@@ -39,7 +39,6 @@ class Movie:
             return True
 
         return False
-        # return path.exists(Directories.ready.append(self.name).replace("mkv", "mp4"))
 
     def creation_time(self):
         return path.getctime(self.path)
@@ -66,6 +65,6 @@ class Movie:
         dest_dir = path.join(dest_dir, self.name)
 
         if not self.is_locked():
-            print(f"Moving {self.name} [{self.size} GB] from {source_dir} to {dest_dir}")
+            print(f"Moving {self.name} [{self.size} GB] from {source_dir} to {dest_dir}", end="\r")
             shutil.move(source_dir, dest_dir)
             print(f"Finished Moving {self.name} [{self.size} GB] from {source_dir} to {dest_dir}")
