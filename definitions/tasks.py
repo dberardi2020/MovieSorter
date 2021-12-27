@@ -65,12 +65,14 @@ def clean_compression_queue():
 
 
 def run_compression():
-    print("Compressing movies in Ready for Compression...")
+    logger = Logger()
+    eta = statistics.estimate(Directories.queued.get_size())
+
+    logger.log_and_print(f"Compressing movies in Ready for Compression... [ETA: {eta}]")
     queued = Directories.queued.get_movies()
     total_tasks = len(queued)
     current_task = 0
     master_start_time = time.time()
-    logger = Logger()
     log_cache = []
     for movie in queued:
         target = 0
@@ -87,12 +89,16 @@ def run_compression():
                 target += 10
 
         compressed_movie_size = helpers.convert_to_gb(path.getsize(output_path))
+        run_time = helpers.run_time(start_time)
+        statistics.add_stat(movie.size, round(run_time))
         output_log = f"Compressed {movie.name} from {movie.size} GB to {compressed_movie_size} " \
-                     f"GB in {helpers.run_time(start_time)}"
+                     f"GB in {helpers.format_time(run_time)}"
         log_cache.append(output_log)
 
     print()
-    logger.log_and_print(f"Completed {total_tasks} compression(s) in {helpers.run_time(master_start_time)}")
+    logger.log_and_print(
+        f"Completed {total_tasks} compression(s) in {helpers.format_time(helpers.run_time(master_start_time))}... "
+        f"[ETA: {eta}]")
     for log in log_cache:
         logger.log_and_print(log)
     print()
@@ -115,12 +121,10 @@ def upload_to_nas():
         movie.upload_to_nas()
         size_total = size_total - movie.size
 
-    print(f"Uploaded {num_uploads} movies in {helpers.run_time(start_time)}")
+    print(f"Uploaded {num_uploads} movies in {helpers.format_time(helpers.run_time(start_time))}")
 
 
 def dev_func():
-    statistics.add_stat(14, 555555)
-    statistics.read_stat()
     sys.exit()
 
 

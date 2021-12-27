@@ -1,14 +1,15 @@
 from datetime import datetime
-from os import path
+from os import path, mkdir
 
 from definitions import const
 
 
 class Logger:
     def __init__(self):
-        log_file_name = path.join(const.log_dir, f"compression_log_{datetime.now().strftime('%m-%d-%Y_%H%M%S')}.txt")
-        extended_log_file_name = path.join(
-            const.log_dir, f"extended_compression_log_{datetime.now().strftime('%m-%d-%Y_%H%M%S')}.txt")
+        log_folder = path.join(const.log_dir, datetime.now().strftime('%m-%d-%Y @ %Hh%Mm%Ss'))
+        mkdir(log_folder)
+        log_file_name = path.join(log_folder, "compression_log.txt")
+        extended_log_file_name = path.join(log_folder, "extended_compression_log.txt")
 
         self.log_file = open(log_file_name, 'w')
         self.extended_log_file = open(extended_log_file_name, 'w')

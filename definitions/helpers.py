@@ -6,9 +6,12 @@ def convert_to_gb(size_in_bytes):
     return round(size_in_bytes * (10 ** -9))
 
 
-def run_time(start_time):
-    seconds = time.time() - start_time
+def format_time(seconds):
     return time.strftime("%Hh%Mm%Ss", time.gmtime(seconds))
+
+
+def run_time(start_time):
+    return time.time() - start_time
 
 
 def process_compression_output(movie_name, current_task, total_tasks, line, target, logger):
