@@ -2,6 +2,11 @@ from os import path
 
 dev = False
 
+if dev:
+    dev_flag = "[Dev Mode]"
+else:
+    dev_flag = ""
+
 upload_limit = 8
 
 external_drive = "E:"
