@@ -125,6 +125,7 @@ def upload_to_nas():
 
 
 def dev_func():
+    statistics.print_stat()
     sys.exit()
 
 

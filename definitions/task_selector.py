@@ -41,6 +41,7 @@ def selection_prompt():
     elif action == task_list.compress_upload:
         tasks.sort()
         tasks.run_compression()
+        tasks.clean_compression_queue()
         tasks.upload_to_nas()
     elif action == task_list.run_compression:
         tasks.sort()
