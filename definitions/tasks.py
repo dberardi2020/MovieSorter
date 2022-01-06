@@ -41,7 +41,7 @@ def change_name():
         return
 
     name = inquirer.text(message=f"Please provide the new name for {selected.name}: ",
-                         raise_keyboard_interrupt=False).execute()
+                         raise_keyboard_interrupt=False, default=selected.remove_extension()).execute()
 
     if not name:
         return
