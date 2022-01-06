@@ -5,9 +5,11 @@ import time
 from os import path
 
 from InquirerPy import inquirer
+from InquirerPy.base import Choice
 
 from Classes import Directories
 from Classes.Logger import Logger
+from Classes.Movie import Movie
 from definitions import const, helpers, statistics
 
 upload_limit = 6
@@ -17,8 +19,39 @@ def check_name():
     check = Directories.downloads.contains("title.mkv")
     if check and not check.is_locked():
         Directories.downloads.print()
-        name = inquirer.text(message="Please rename title.mkv in Downloaded: ").execute()
-        check.rename(name)
+        name = inquirer.text(message="Please rename title.mkv in Downloaded: ",
+                             raise_keyboard_interrupt=False).execute()
+        if name:
+            check.rename(name)
+
+
+def change_name():
+    check_name()
+
+    # Give selection prompt
+    selected: Movie = inquirer.select(
+        message="Which movie would you like to rename?",
+        choices=[Choice(movie, name=movie.name) for movie in helpers.get_all_movie()] +
+                [Choice(value=None, name="Exit")],
+        show_cursor=False,
+        raise_keyboard_interrupt=False
+    ).execute()
+
+    if not selected:
+        return
+
+    name = inquirer.text(message=f"Please provide the new name for {selected.name}: ",
+                         raise_keyboard_interrupt=False).execute()
+
+    if not name:
+        return
+
+    confirmed = inquirer.confirm(
+        message=f"Are you sure you want to rename {selected.name} to {name}{selected.get_extension()}?",
+        raise_keyboard_interrupt=False).execute()
+
+    if confirmed:
+        selected.rename(name)
 
 
 def get_external_info():
@@ -125,7 +158,6 @@ def upload_to_nas():
 
 
 def dev_func():
-    statistics.print_stat()
     sys.exit()
 
 

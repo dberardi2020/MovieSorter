@@ -17,7 +17,7 @@ class Movie:
         print(f"  -  {self.name}: {self.size.__str__()} GB")
 
     def rename(self, name):
-        rename(self.path, path.join(self.dir, name + ".mkv"))
+        rename(self.path, path.join(self.dir, name + self.get_extension()))
 
     def is_locked(self):
         path_obj = Path(self.path)
@@ -45,6 +45,9 @@ class Movie:
 
     def remove_extension(self):
         return path.splitext(self.name)[0]
+
+    def get_extension(self):
+        return path.splitext(self.name)[1]
 
     def move_to_compression(self):
         self._move(Directories.queued.path)

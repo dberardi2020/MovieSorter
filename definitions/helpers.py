@@ -1,6 +1,9 @@
 import re
 import time
 
+from Classes import Directories
+from Classes import Movie
+
 
 def convert_to_gb(size_in_bytes):
     return round(size_in_bytes * (10 ** -9))
@@ -12,6 +15,11 @@ def format_time(seconds):
 
 def run_time(start_time):
     return time.time() - start_time
+
+
+def get_all_movie() -> [Movie]:
+    movies_array = [Directories.queued.get_movies(), Directories.ready.get_movies(), Directories.downloads.get_movies()]
+    return [item for sublist in movies_array for item in sublist]
 
 
 def process_compression_output(movie_name, current_task, total_tasks, line, target, logger):
