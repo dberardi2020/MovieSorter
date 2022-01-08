@@ -2,9 +2,12 @@
 import sys
 from os import path
 
+import colorama
+
 from definitions import task_selector, const
 
 if __name__ == '__main__':
+    colorama.init()
     print(f"MovieSorter execution started... {const.dev_flag} \n")
 
     if not path.exists(const.external_drive):

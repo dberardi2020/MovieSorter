@@ -2,6 +2,5 @@
  Script for managing each stage in the process of ripping a DVD collection
 
 TODO
-* Better logging for uploads (No repeated lines)
 * Add more verbose logging (every print should also log)
-* Automated Testing
+  * https://stackoverflow.com/questions/14906764/how-to-redirect-stdout-to-both-file-and-console-with-scripting

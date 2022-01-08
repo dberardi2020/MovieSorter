@@ -7,7 +7,7 @@ from os import path
 from InquirerPy import inquirer
 from InquirerPy.base import Choice
 
-from Classes import Directories
+from Classes import Directories, ANSI
 from Classes.Logger import Logger
 from Classes.Movie import Movie
 from definitions import const, helpers, statistics
@@ -138,14 +138,15 @@ def run_compression():
 
 
 def upload_to_nas():
-    print("Uploading movies in Ready for Upload...")
+    print("Uploading movies in Ready for Upload...\n")
     num_uploads = Directories.ready.get_movies_cnt()
     uploads_left = Directories.ready.get_movies_cnt()
     size_total = Directories.ready.get_size()
     start_time = time.time()
 
-    for movie in Directories.ready.get_movies():
-        print(f"{uploads_left} movie(s) left to upload - [{size_total} GB]")
+    for idx, movie in enumerate(Directories.ready.get_movies()):
+        print(
+            f"{ANSI.up_char(idx + 1)}{uploads_left} movie(s) left to upload - [{size_total} GB]{ANSI.clr_char()}{ANSI.down_char(idx)}")
         uploads_left = uploads_left - 1
 
         if movie.is_locked():
@@ -154,7 +155,9 @@ def upload_to_nas():
         movie.upload_to_nas()
         size_total = size_total - movie.size
 
-    print(f"Uploaded {num_uploads} movies in {helpers.format_time(helpers.run_time(start_time))}")
+    print(
+        f"{ANSI.up_char(num_uploads + 1)}{uploads_left} movie(s) left to upload - [{size_total} GB]{ANSI.clr_char()}{ANSI.down_char(num_uploads)}")
+    print(f"\nUploaded {num_uploads} movies in {helpers.format_time(helpers.run_time(start_time))}")
 
 
 def dev_func():
