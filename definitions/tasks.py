@@ -7,10 +7,10 @@ from os import path
 from InquirerPy import inquirer
 from InquirerPy.base import Choice
 
-from Classes import Directories, ANSI
+from Classes import Directories, ANSI, Statistics
 from Classes.Logger import Logger
 from Classes.Movie import Movie
-from definitions import const, helpers, statistics
+from definitions import const, helpers
 
 upload_limit = 6
 
@@ -99,7 +99,7 @@ def clean_compression_queue():
 
 def run_compression():
     logger = Logger()
-    eta = statistics.estimate(Directories.queued.get_size())
+    eta = Statistics.compression.estimate(Directories.queued.get_size())
 
     logger.log_and_print(f"Compressing movies in Ready for Compression... [ETA: {eta}]")
     queued = Directories.queued.get_movies()
@@ -123,7 +123,7 @@ def run_compression():
 
         compressed_movie_size = helpers.convert_to_gb(path.getsize(output_path))
         run_time = helpers.run_time(start_time)
-        statistics.add_stat(movie.size, round(run_time))
+        Statistics.compression.add_stat(movie.size, run_time)
         output_log = f"Compressed {movie.name} from {movie.size} GB to {compressed_movie_size} " \
                      f"GB in {helpers.format_time(run_time)}"
         log_cache.append(output_log)
@@ -138,10 +138,13 @@ def run_compression():
 
 
 def upload_to_nas():
-    print("Uploading movies in Ready for Upload...\n")
     num_uploads = Directories.ready.get_movies_cnt()
     uploads_left = Directories.ready.get_movies_cnt()
     size_total = Directories.ready.get_size()
+
+    eta = Statistics.upload.estimate(size_total)
+    print(f"Uploading movies in Ready for Upload... [ETA: {eta}]\n")
+
     start_time = time.time()
 
     for idx, movie in enumerate(Directories.ready.get_movies()):
@@ -153,6 +156,7 @@ def upload_to_nas():
             continue
 
         movie.upload_to_nas()
+        Statistics.upload.add_stat(movie.size, helpers.run_time(start_time))
         size_total = size_total - movie.size
 
     print(
@@ -161,6 +165,9 @@ def upload_to_nas():
 
 
 def dev_func():
+    Statistics.compression.print_stat()
+    print()
+    Statistics.upload.print_stat()
     sys.exit()
 
 
