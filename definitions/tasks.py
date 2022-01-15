@@ -63,6 +63,8 @@ def get_external_info():
 
 
 def get_dir_info():
+    get_external_info()
+    print()
     Directories.downloads.print()
     Directories.queued.print()
     Directories.ready.print()

@@ -12,7 +12,6 @@ task_list.upload = "Upload to NAS"
 task_list.run_compression = "Run Compression"
 task_list.compress_upload = "Compress and Upload"
 task_list.dir_info = "Get Directory Info"
-task_list.drive_info = "Get External HD Info"
 task_list.rename = "Rename Title"
 task_list.mark_failure = "Mark Failure"
 task_list.mark_series = "Mark Series"
@@ -32,8 +31,6 @@ def selection_prompt():
 
     if action == task_list.rename:
         tasks.change_name()
-    elif action == task_list.drive_info:
-        tasks.get_external_info()
     elif action == task_list.dir_info:
         tasks.get_dir_info()
     elif action == task_list.compress_upload:
