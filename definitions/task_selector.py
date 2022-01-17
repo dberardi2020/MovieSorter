@@ -35,6 +35,7 @@ def selection_prompt():
         tasks.get_dir_info()
     elif action == task_list.compress_upload:
         tasks.sort()
+        tasks.upload_to_nas()
         tasks.run_compression()
         tasks.clean_compression_queue()
         tasks.upload_to_nas()
