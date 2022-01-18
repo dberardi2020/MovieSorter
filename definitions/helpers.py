@@ -23,6 +23,25 @@ def get_all_movie() -> [Movie]:
     return [item for sublist in movies_array for item in sublist]
 
 
+def _add_record(file, name) -> bool:
+    file = open(file, 'r+')
+    if name not in file.read():
+        file.write("\n" + name)
+        file.close()
+        return True
+    else:
+        print("Duplicate entry detected...")
+        return False
+
+
+def write_failure(failure_name) -> bool:
+    return _add_record(const.failure_file, failure_name)
+
+
+def write_series(series_name):
+    _add_record(const.series_file, series_name)
+
+
 def process_compression_output(movie_name, current_task, total_tasks, line, target, logger):
     if not line.startswith("Encoding:"):
         return False

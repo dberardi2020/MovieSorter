@@ -180,21 +180,15 @@ def mark_failure():
     confirmed = inquirer.confirm(message=f"Are you sure you want to mark {last_rip_name} as a failure?",
                                  raise_keyboard_interrupt=False).execute()
     if confirmed:
-        file = open(const.failure_file, 'r+')
-        if last_rip_name not in file.read():
-            file.write("\n" + last_rip_name)
-            file.close()
+        if helpers.write_failure(last_rip_name):
             last_rip.delete()
-        else:
-            print("This entry is already marked as a failure")
+    else:
+        custom = inquirer.text(message="What is the name of the failure?: ", raise_keyboard_interrupt=False).execute()
+        if custom:
+            helpers.write_failure(custom)
 
 
 def mark_series():
     series = inquirer.text(message="What is the name of the series?: ", raise_keyboard_interrupt=False).execute()
     if series:
-        file = open(const.series_file, 'r+')
-        if series not in file.read():
-            file.write("\n" + series)
-            file.close()
-        else:
-            print("This entry is already marked as a series")
+        helpers.write_series(series)
