@@ -24,3 +24,6 @@ nas_dir = "//DimitriNAS/Movies"
 
 failure_file = path.abspath("./records/failures.txt")
 series_file = path.abspath("./records/series.txt")
+
+percent_pattern = ", (.*?) %"
+eta_pattern = "ETA (.*?)\\)"

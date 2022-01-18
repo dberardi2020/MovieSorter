@@ -3,6 +3,7 @@ import time
 
 from Classes import Directories
 from Classes import Movie
+from definitions import const
 
 
 def convert_to_gb(size_in_bytes):
@@ -23,9 +24,6 @@ def get_all_movie() -> [Movie]:
 
 
 def process_compression_output(movie_name, current_task, total_tasks, line, target, logger):
-    percent_pattern = ", (.*?) %"
-    eta_pattern = "ETA (.*?)\\)"
-
     if not line.startswith("Encoding:"):
         return False
 
@@ -34,14 +32,17 @@ def process_compression_output(movie_name, current_task, total_tasks, line, targ
 
     logger.log(line)
 
-    percent = re.search(percent_pattern, line)
-    eta = re.search(eta_pattern, line)
+    percent = re.search(const.percent_pattern, line)
+    eta = re.search(const.eta_pattern, line)
 
     if not percent or not eta:
         return False
 
-    percent = int(float(percent.group(1)))
-    eta = eta.group(1)
+    try:
+        percent = int(float(percent.group(1)))
+        eta = eta.group(1)
+    except ValueError:
+        return False
 
     if percent == target:
         spacing = "  "
