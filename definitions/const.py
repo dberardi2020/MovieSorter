@@ -1,11 +1,7 @@
+import shutil
 from os import path
 
 dev = False
-
-if dev:
-    dev_flag = "[Dev Mode]"
-else:
-    dev_flag = ""
 
 upload_limit = 8
 
@@ -27,3 +23,13 @@ series_file = path.abspath("./records/series.txt")
 
 percent_pattern = ", (.*?) %"
 eta_pattern = "ETA (.*?)\\)"
+
+if dev:
+    dev_flag = "[Dev Mode] "
+else:
+    dev_flag = ""
+
+if shutil.disk_usage(external_drive).used > shutil.disk_usage(external_drive).free:
+    compression_warning = "[WARNING] - Disk Usage Exceeds 50%"
+else:
+    compression_warning = ""
