@@ -163,7 +163,7 @@ def upload_to_nas():
 
     print(
         f"{ANSI.up_char(num_uploads + 1)}{uploads_left} movie(s) left to upload - [{size_total} GB]{ANSI.clr_char()}{ANSI.down_char(num_uploads)}")
-    print(f"\nUploaded {num_uploads} movies in {helpers.format_time(helpers.run_time(start_time))}")
+    print(f"\nUploaded {num_uploads} movies in {helpers.format_time(helpers.run_time(start_time))}\n")
 
 
 def dev_func():
