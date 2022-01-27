@@ -175,13 +175,19 @@ def dev_func():
 
 def mark_failure():
     check_name()
-    last_rip = Directories.downloads.get_movies()[0]
-    last_rip_name = last_rip.remove_extension()
-    confirmed = inquirer.confirm(message=f"Are you sure you want to mark {last_rip_name} as a failure?",
-                                 raise_keyboard_interrupt=False).execute()
-    if confirmed:
-        if helpers.write_failure(last_rip_name):
-            last_rip.delete()
+    if Directories.downloads.get_movies_cnt() > 0:
+        last_rip = Directories.downloads.get_movies()[0]
+        last_rip_name = last_rip.remove_extension()
+        confirmed = inquirer.confirm(message=f"Are you sure you want to mark {last_rip_name} as a failure?",
+                                     raise_keyboard_interrupt=False).execute()
+        if confirmed:
+            if helpers.write_failure(last_rip_name):
+                last_rip.delete()
+        else:
+            custom = inquirer.text(message="What is the name of the failure?: ",
+                                   raise_keyboard_interrupt=False).execute()
+            if custom:
+                helpers.write_failure(custom)
     else:
         custom = inquirer.text(message="What is the name of the failure?: ", raise_keyboard_interrupt=False).execute()
         if custom:
